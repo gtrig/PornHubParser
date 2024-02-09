@@ -6,8 +6,9 @@ use App\Models\HairColor;
 use App\Models\Ethnicity;
 use App\Models\Orientation;
 use App\Models\BreastType;
-use Illuminate\Contracts\Cache\Store;
 use Illuminate\Support\Facades\Storage;
+use \JsonMachine\Items;
+use JsonMachine\JsonDecoder\ExtJsonDecoder;
 
 class JsonParserService
 {
@@ -29,7 +30,22 @@ class JsonParserService
         
         // using regex to extract the unique hair colors
         preg_match_all('/"hairColor":"([^"]+)"/', $feed, $matches);
+        
+        foreach ($matches[1] as $match) {
+            //if the match has the character | in it, then we need to split it and add the values to the array
+            if (strpos($match, '|') !== false) {
+                $split = explode('|', $match);
+                foreach ($split as $value) {
+                    $matches[1][] = $value;
+                }
+                //remove the original value from the array
+                unset($matches[1][array_search($match, $matches[1])]);
+            }
+        }
+
         $hairColors = array_values(array_unique($matches[1]));
+
+
 
         return $hairColors;
     }
@@ -40,6 +56,19 @@ class JsonParserService
         
         
         preg_match_all('/"ethnicity":"([^"]+)"/', $feed, $matches);
+
+        foreach ($matches[1] as $match) {
+            //if the match has the character | in it, then we need to split it and add the values to the array
+            if (strpos($match, '|') !== false) {
+                $split = explode('|', $match);
+                foreach ($split as $value) {
+                    $matches[1][] = $value;
+                }
+                //remove the original value from the array
+                unset($matches[1][array_search($match, $matches[1])]);
+            }
+        }
+        
         $ethnicities = array_values(array_unique($matches[1]));
 
         return $ethnicities;
@@ -67,6 +96,7 @@ class JsonParserService
 
     public function updateTypes()
     {
+        // using the methods above to parse the unique elements and create them in the database.
         $hairColors = $this->parseHairColors();
         $ethnicities = $this->parseEthnicities();
         $orientations = $this->parseOrientations();
@@ -91,24 +121,15 @@ class JsonParserService
         return true;
     }
 
-    protected function parseJson($file)
-    {
-        while (!feof($file)) {
-            $line = fgets($file);
-            
-            if ($line !== false) {
-                yield json_decode($line, true);
-            }
-        }
-        
-        fclose($file);
-    }
-
     public function parsePornstars()
     {
+        $path = Storage::disk('local')->path('feed.json');
+        
+        // using json-machine to parse the json file for efficiency
+        $items = Items::fromFile($path, ['pointer' => '/items','decoder' => new ExtJsonDecoder(true)]);
         $pornstars = [];
-        foreach ($this->parseJson(fopen(storage_path('app/feed.json'),'r')) as $pornstar) {
-            var_dump($pornstar);
+        foreach ($items as $pornstar) {
+            $pornstars[] = $pornstar;
         }
 
         return $pornstars;
