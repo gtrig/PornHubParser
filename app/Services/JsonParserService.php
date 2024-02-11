@@ -2,20 +2,35 @@
 
 namespace App\Services;
 
+use App\Jobs\DownloadImageJob;
+use App\Jobs\UpdatePornstarJob;
 use App\Models\HairColor;
 use App\Models\Ethnicity;
 use App\Models\Orientation;
 use App\Models\BreastType;
+use App\Models\Pornstar;
+use Illuminate\Contracts\Cache\Store;
+use Illuminate\Database\Eloquent\Collection;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Storage;
 use \JsonMachine\Items;
 use JsonMachine\JsonDecoder\ExtJsonDecoder;
 
 class JsonParserService
 {
+    protected $feed;
+    // Download the json file and save it to the storage directory
+
+    public function __construct()
+    {
+        $this->feed = Storage::disk('local')->get('feed.json');
+    }
+
     public function downloadFeed($url)
     {
         try {
             $feed = file_get_contents($url);
+            $this->feed = $feed;
             Storage::disk('local')->put('feed.json', $feed);
             return true;
         } catch (\Exception $e) {
@@ -24,12 +39,11 @@ class JsonParserService
         }
     }
 
+    // Parse the hair colors from the json file using regex and return an array of unique hair colors
     public function parseHairColors()
-    {
-        $feed = Storage::disk('local')->get('feed.json');
-        
+    {   
         // using regex to extract the unique hair colors
-        preg_match_all('/"hairColor":"([^"]+)"/', $feed, $matches);
+        preg_match_all('/"hairColor":"([^"]+)"/', $this->feed, $matches);
         
         foreach ($matches[1] as $match) {
             //if the match has the character | in it, then we need to split it and add the values to the array
@@ -50,12 +64,10 @@ class JsonParserService
         return $hairColors;
     }
 
+    // Parse the Ethnicities from the json file using regex and return an array of unique Ethnicities
     public function parseEthnicities()
     {
-        $feed = Storage::disk('local')->get('feed.json');
-        
-        
-        preg_match_all('/"ethnicity":"([^"]+)"/', $feed, $matches);
+        preg_match_all('/"ethnicity":"([^"]+)"/', $this->feed, $matches);
 
         foreach ($matches[1] as $match) {
             //if the match has the character | in it, then we need to split it and add the values to the array
@@ -68,35 +80,33 @@ class JsonParserService
                 unset($matches[1][array_search($match, $matches[1])]);
             }
         }
-        
+
         $ethnicities = array_values(array_unique($matches[1]));
 
         return $ethnicities;
     }
 
+    // Parse the Orientations from the json file using regex and return an array of unique Orientations
     public function parseOrientations()
     {
-        $feed = Storage::disk('local')->get('feed.json');
-        
-        preg_match_all('/"orientation":"([^"]+)"/', $feed, $matches);
+        preg_match_all('/"orientation":"([^"]+)"/', $this->feed, $matches);
         $orientations = array_values(array_unique($matches[1]));
 
         return $orientations;
     }
 
+    // Parse the BreastTypes from the json file using regex and return an array of unique BreastTypes
     public function parseBreastTypes()
-    {
-        $feed = Storage::disk('local')->get('feed.json');
-        
-        preg_match_all('/"breastType":"([^"]+)"/', $feed, $matches);
+    {        
+        preg_match_all('/"breastType":"([^"]+)"/', $this->feed, $matches);
         $breastTypes = array_values(array_unique($matches[1]));
 
         return $breastTypes;
     }
 
+    // using the methods above to parse the unique elements and store them in the database.
     public function updateTypes()
     {
-        // using the methods above to parse the unique elements and create them in the database.
         $hairColors = $this->parseHairColors();
         $ethnicities = $this->parseEthnicities();
         $orientations = $this->parseOrientations();
@@ -121,17 +131,69 @@ class JsonParserService
         return true;
     }
 
+    public static function updatePornstar(array $pornstar): Pornstar
+    {
+        // if the name is not in the cache, create else update
+        // $pslist = Cache::get('pornstars');
+        // if (!in_array($pornstar['name'], $pslist)) {
+        //     $p = Pornstar::create($pornstar);
+        // } else {
+        //     $p = Pornstar::where(['name' => $pornstar['name']])->first();
+        //     $p->fill($pornstar);
+        //     $p->save();
+        // }
+        $p = Pornstar::updateOrCreate(['name' => $pornstar['name']], $pornstar);
+
+        if(array_key_exists('aliases', $pornstar)) {
+            $aliases = $pornstar['aliases'];
+            $p->syncAliases($aliases);
+        }
+
+        if(array_key_exists('thumbnails', $pornstar) && count($pornstar['thumbnails']) > 0) {
+            if(is_array($pornstar['thumbnails'][0]['urls']) && count($pornstar['thumbnails'][0]['urls'])>0) {
+                // echo $pornstar['thumbnails'][0]['urls'][0]."\n";
+                $path = 'thumbnails/'.$p->generateImagePath();
+                DownloadImageJob::dispatch($pornstar['thumbnails'][0]['urls'][0], $path);
+            }
+        }
+
+        // update relationships
+        if(array_key_exists('hairColor', $pornstar['attributes'])) {
+            $p->hairColor = $pornstar['attributes']['hairColor'];
+        }
+
+        if(array_key_exists('ethnicity', $pornstar['attributes'])) {
+            $p->ethnicity = $pornstar['attributes']['ethnicity'];
+        }
+        
+        if(array_key_exists('orientation', $pornstar['attributes'])) {
+            $p->orientation = $pornstar['attributes']['orientation'];
+        }
+
+        if(array_key_exists('breastType', $pornstar['attributes'])) {
+            $p->breastType = $pornstar['attributes']['breastType'];
+        }
+    
+        return $p;
+    }
+    
+    // Parse the pornstars from the json file using json-machine for efficiency and return an array of pornstars
     public function parsePornstars()
     {
         $path = Storage::disk('local')->path('feed.json');
         
-        // using json-machine to parse the json file for efficiency
+        // create a cached array of pornstars names that already exist in the database
+        // $pornstars = Pornstar::all()->pluck('name')->toArray();
+        // Cache::put('pornstars', $pornstars, config(500));
+
         $items = Items::fromFile($path, ['pointer' => '/items','decoder' => new ExtJsonDecoder(true)]);
-        $pornstars = [];
+        $count = 0;
         foreach ($items as $pornstar) {
-            $pornstars[] = $pornstar;
+            $count++;
+            // UpdatePornstarJob::dispatch($pornstar);
+            JsonParserService::updatePornstar($pornstar);
         }
 
-        return $pornstars;
+        return $count;
     }
 }

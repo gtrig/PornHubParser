@@ -15,19 +15,17 @@ return new class extends Migration
             $table->id();
             //simple attributes
             $table->string('name');
-            $table->integer('age');
+            $table->integer('age')->nullable();
             $table->string('link');
+            $table->string('license');
+            $table->boolean('wlStatus');
             $table->boolean('piercings');
             $table->boolean('tattoos');
-            $table->string('breast_size');
+            $table->string('breast_size')->nullable();
             //complex attributes
-            $table->unsignedBigInteger('hair_color_id');
-            $table->foreign('hair_color_id')->references('id')->on('hair_colors');
-            $table->unsignedBigInteger('ethnicity_id');
-            $table->foreign('ethnicity_id')->references('id')->on('ethnicities');
-            $table->unsignedBigInteger('breast_type_id');
+            $table->unsignedBigInteger('breast_type_id')->nullable();
             $table->foreign('breast_type_id')->references('id')->on('breast_types');
-            $table->unsignedBigInteger('orientation_id');
+            $table->unsignedBigInteger('orientation_id')->nullable();
             $table->foreign('orientation_id')->references('id')->on('orientations');
             //stats
             $table->integer('monthlySearches');
@@ -39,9 +37,8 @@ return new class extends Migration
             $table->integer('videosCount');
             $table->integer('views');
             $table->integer('whiteLabelVideoCount');
-
-
             $table->timestamps();
+            $table->index('name');
         });
     }
 
