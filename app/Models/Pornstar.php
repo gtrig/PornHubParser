@@ -11,6 +11,7 @@ class Pornstar extends Model
     use HasFactory;
 
     protected $fillable = [
+        'ph_id',
         'attributes',
         'name',
         'age',
@@ -82,25 +83,17 @@ class Pornstar extends Model
         return $this->hasMany(Alias::class);
     }
 
+    public function stats()
+    {
+        return $this->hasOne(Stats::class);
+    }
+
     public function syncAliases($aliases)
     {
         $this->aliases()->delete();
         foreach ($aliases as $alias) {
             $this->aliases()->create(['name' => $alias]);
         }
-    }
-
-    public function setStatsAttribute($value)
-    {
-        $this->monthlySearches = $value['monthlySearches'];
-        $this->premiumVideosCount = $value['premiumVideosCount'];
-        $this->rank = $value['rank'];
-        $this->rankPremium = $value['rankPremium'];
-        $this->rankWl = $value['rankWl'];
-        $this->subscriptions = $value['subscriptions'];
-        $this->videosCount = $value['videosCount'];
-        $this->views = $value['views'];
-        $this->whiteLabelVideoCount = $value['whiteLabelVideoCount'];
     }
 
     public function setAttributesAttribute($value)
@@ -118,7 +111,6 @@ class Pornstar extends Model
         if(isset($value['orientation'])) {
             $this->orientation = $value['orientation'];
         }
-        $this->stats = $value['stats'];
     }
 
     public function setBreastTypeAttribute($value)

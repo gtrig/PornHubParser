@@ -9,9 +9,6 @@ use App\Models\Ethnicity;
 use App\Models\Orientation;
 use App\Models\BreastType;
 use App\Models\Pornstar;
-use Illuminate\Contracts\Cache\Store;
-use Illuminate\Database\Eloquent\Collection;
-use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Storage;
 use \JsonMachine\Items;
 use JsonMachine\JsonDecoder\ExtJsonDecoder;
@@ -107,23 +104,23 @@ class JsonParserService
     // using the methods above to parse the unique elements and store them in the database.
     public function updateTypes()
     {
+        
         $hairColors = $this->parseHairColors();
-        $ethnicities = $this->parseEthnicities();
-        $orientations = $this->parseOrientations();
-        $breastTypes = $this->parseBreastTypes();
-
         foreach ($hairColors as $color) {
             HairColor::firstOrCreate(['value' => $color]);
         }
-
+        
+        $ethnicities = $this->parseEthnicities();
         foreach ($ethnicities as $ethnicity) {
             Ethnicity::firstOrCreate(['value' => $ethnicity]);
         }
-
+        
+        $orientations = $this->parseOrientations();
         foreach ($orientations as $orientation) {
             Orientation::firstOrCreate(['value' => $orientation]);
         }
-
+        
+        $breastTypes = $this->parseBreastTypes();
         foreach ($breastTypes as $breastType) {
             BreastType::firstOrCreate(['value' => $breastType]);
         }
@@ -133,16 +130,12 @@ class JsonParserService
 
     public static function updatePornstar(array $pornstar): Pornstar
     {
-        // if the name is not in the cache, create else update
-        // $pslist = Cache::get('pornstars');
-        // if (!in_array($pornstar['name'], $pslist)) {
-        //     $p = Pornstar::create($pornstar);
-        // } else {
-        //     $p = Pornstar::where(['name' => $pornstar['name']])->first();
-        //     $p->fill($pornstar);
-        //     $p->save();
-        // }
-        $p = Pornstar::updateOrCreate(['name' => $pornstar['name']], $pornstar);
+        $stats = $pornstar['attributes']['stats'];
+        unset($pornstar['attributes']['stats']);
+
+        $p = Pornstar::updateOrCreate(['ph_id' => $pornstar['ph_id']], $pornstar);
+        
+        $p->stats()->updateOrCreate(['pornstar_id' => $p->id], $stats);
 
         if(array_key_exists('aliases', $pornstar)) {
             $aliases = $pornstar['aliases'];
@@ -156,6 +149,9 @@ class JsonParserService
                 DownloadImageJob::dispatch($pornstar['thumbnails'][0]['urls'][0], $path);
             }
         }
+
+        
+        
 
         // update relationships
         if(array_key_exists('hairColor', $pornstar['attributes'])) {
@@ -181,14 +177,12 @@ class JsonParserService
     public function parsePornstars()
     {
         $path = Storage::disk('local')->path('feed.json');
-        
-        // create a cached array of pornstars names that already exist in the database
-        // $pornstars = Pornstar::all()->pluck('name')->toArray();
-        // Cache::put('pornstars', $pornstars, config(500));
 
         $items = Items::fromFile($path, ['pointer' => '/items','decoder' => new ExtJsonDecoder(true)]);
         $count = 0;
         foreach ($items as $pornstar) {
+            $pornstar['ph_id'] = $pornstar['id'];
+            unset($pornstar['id']);
             $count++;
             // UpdatePornstarJob::dispatch($pornstar);
             JsonParserService::updatePornstar($pornstar);

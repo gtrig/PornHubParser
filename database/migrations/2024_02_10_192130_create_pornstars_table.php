@@ -13,6 +13,7 @@ return new class extends Migration
     {
         Schema::create('pornstars', function (Blueprint $table) {
             $table->id();
+            $table->unsignedBigInteger('ph_id');
             //simple attributes
             $table->string('name');
             $table->integer('age')->nullable();
@@ -27,18 +28,9 @@ return new class extends Migration
             $table->foreign('breast_type_id')->references('id')->on('breast_types');
             $table->unsignedBigInteger('orientation_id')->nullable();
             $table->foreign('orientation_id')->references('id')->on('orientations');
-            //stats
-            $table->integer('monthlySearches');
-            $table->integer('premiumVideosCount');
-            $table->integer('rank');
-            $table->integer('rankPremium');
-            $table->integer('rankWl');
-            $table->integer('subscriptions');
-            $table->integer('videosCount');
-            $table->integer('views');
-            $table->integer('whiteLabelVideoCount');
             $table->timestamps();
             $table->index('name');
+            $table->index('ph_id');
         });
     }
 
