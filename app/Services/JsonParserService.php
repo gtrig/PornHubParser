@@ -150,9 +150,6 @@ class JsonParserService
             }
         }
 
-        
-        
-
         // update relationships
         if(array_key_exists('hairColor', $pornstar['attributes'])) {
             $p->hairColor = $pornstar['attributes']['hairColor'];
@@ -184,10 +181,10 @@ class JsonParserService
             $pornstar['ph_id'] = $pornstar['id'];
             unset($pornstar['id']);
             $count++;
+            // $pornstars[] = $pornstar;
             // UpdatePornstarJob::dispatch($pornstar);
             JsonParserService::updatePornstar($pornstar);
         }
-
         return $count;
     }
 }

@@ -1,5 +1,9 @@
 <?php
 
+use App\Livewire\Pornstars\Board;
+use App\Models\Orientation;
+use App\Services\JsonParserService;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -13,6 +17,14 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::get('/', function () {
-    return view('welcome');
+Route::get('/', Board::class)->name('pornstars.board');
+
+Route::get('/test', function () {
+    $jps = new JsonParserService();
+    // $hc = $jps->downloadFeed('https://www.pornhub.com/files/json_feed_pornstars.json');
+    // $jps->updateTypes();
+
+    echo '<pre>';
+    print_r($jps->parsePornstars());
+    echo '</pre>';
 });

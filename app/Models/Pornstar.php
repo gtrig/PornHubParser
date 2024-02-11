@@ -5,6 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Facades\Storage;
 
 class Pornstar extends Model
 {
@@ -56,6 +57,12 @@ class Pornstar extends Model
         }
 
         return implode('/', $path).'/'.$this->id.'.jpg';
+    }
+
+    public function hasImage()
+    {
+        $path = 'thumbnails/'.$this->generateImagePath();
+        return Storage::disk('public')->exists($path);
     }
 
     public function breastType()
