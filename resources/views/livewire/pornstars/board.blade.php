@@ -10,7 +10,7 @@
         <div class="flex flex-col gap-2 justify-between">
             <livewire:pornstars.filters />
         </div>
-        <div class="mt-4">
+        <div class="mt-4 flex-grow">
             @if($pornstars==null)
                 <p class="text-lg font-bold">No pornstars found</p>
             @else
