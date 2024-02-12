@@ -1,4 +1,4 @@
-<div class="w-10/12 justify-center max-w-7xl mx-auto">
+<div class="w-10/12 justify-center max-w-7xl mx-auto pt-10">
     <div class="flex justify-between items-center">
         <div class="flex flex-row gap-2">
             <div class="w-36 h-38">
