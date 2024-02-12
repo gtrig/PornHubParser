@@ -76,7 +76,11 @@ class Board extends Component
             });
         }
 
-        
+        if($this->filters['breastType'] != 'All') {
+            $p->whereHas('breastType', function($q) {
+                $q->where('id', $this->filters['breastType']);
+            });
+        }        
 
         return $p;
     }
@@ -84,8 +88,9 @@ class Board extends Component
     public function render()
     {
         return view('livewire.pornstars.board',
-        [
-            'pornstars' => $this->getPornstars()->paginate($this->perPage)
-        ]);
+            [
+                'pornstars' => $this->getPornstars()->paginate($this->perPage)
+            ]
+        );
     }
 }
