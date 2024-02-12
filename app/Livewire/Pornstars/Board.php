@@ -15,6 +15,8 @@ class Board extends Component
 
     public $perPage = 24;
     public $hairColors;
+    public $sortBy = 'none';
+    public $sortDirection = 'asc';
     public $filters = [
         'search' => '',
         'ageFrom' => null,
@@ -40,6 +42,13 @@ class Board extends Component
         $this->resetPage();
     }
 
+    #[On('sortBy')]
+    public function handleSortBy($sortBy, $sortDirection)
+    {
+        $this->sortBy = $sortBy;
+        $this->sortDirection = $sortDirection;
+    }
+
     public function updatingSearch()
     {
         $this->resetPage();
@@ -48,6 +57,12 @@ class Board extends Component
     public function getPornstars()
     {
         $p = Pornstar::query();
+
+        if($this->sortBy != 'none') {
+            $p->join('stats', 'pornstars.id', '=', 'stats.pornstar_id');
+            $p->where($this->sortBy, '!=', 0);
+            $p->orderBy($this->sortBy, $this->sortDirection);
+        }
 
         if($this->filters['search'] != '') {
             $p->where('name', 'like', '%'.$this->filters['search'].'%');
@@ -101,6 +116,8 @@ class Board extends Component
         {
             $p->where('tattoos',$this->filters['tattoos']);
         }
+
+        
 
         return $p;
     }

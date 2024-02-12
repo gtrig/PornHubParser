@@ -6,6 +6,7 @@
         <div>
             <div class="flex flex-col gap-2 justify-between">
                 <livewire:pornstars.filters />
+                <livewire:pornstars.sortBy />
                 <div class="flex flex-row gap-2  items-center">
                     <label for="perPage" class="text-sm font-bold">Per Page</label>
                     <select
