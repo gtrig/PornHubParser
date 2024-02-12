@@ -60,7 +60,7 @@ class Board extends Component
 
         if($this->sortBy != 'none') {
             $p->join('stats', 'pornstars.id', '=', 'stats.pornstar_id');
-            $p->where($this->sortBy, '!=', 0);
+            $p->where($this->sortBy, '!=', 0); // to avoid 0 values
             $p->orderBy($this->sortBy, $this->sortDirection);
         }
 

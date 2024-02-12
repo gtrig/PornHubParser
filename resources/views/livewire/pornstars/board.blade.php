@@ -6,13 +6,20 @@
         <div>
             <div class="flex flex-col gap-2 justify-between">
                 <livewire:pornstars.filters />
-                <livewire:pornstars.sortBy />
+            </div>
+        </div>
+        <div class="mt-4">
+            @if($pornstars==null)
+                <p class="text-lg font-bold">No pornstars found</p>
+            @else
+            <div class="flex flex-row justify-between">
+            <livewire:pornstars.sortBy />
                 <div class="flex flex-row gap-2  items-center">
-                    <label for="perPage" class="text-sm font-bold">Per Page</label>
+                    <label for="perPage" class="text-sm font-bold">Results Per Page</label>
                     <select
                         id="perPage"
                         wire:model.live="perPage"
-                        class="border border-gray-300 rounded-lg p-2"
+                        class="border border-gray-300 rounded-lg p-2 flex-grow"
                     >
                         <option>6</option>
                         <option>12</option>
@@ -22,11 +29,6 @@
                     </select>
                 </div>
             </div>
-        </div>
-        <div class="mt-4">
-            @if($pornstars==null)
-                <p class="text-lg font-bold">No pornstars found</p>
-            @else
             {{ $pornstars->links() }}
             <ul class="flex flex-row flex-wrap gap-2 justify-between my-2">
                 @foreach($pornstars as $pornstar)

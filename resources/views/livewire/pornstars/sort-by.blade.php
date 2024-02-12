@@ -1,4 +1,4 @@
-<div>
+<div class="flex flex-row gap-4">
     <div class="flex items-center">
         <label for="sort_by" class="mr-2">Sort by:</label>
         <select wire:model.live="sortBy" id="sort_by" class="border border-gray-300 rounded-lg p-2 flex-grow">>
