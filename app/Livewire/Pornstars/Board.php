@@ -20,6 +20,7 @@ class Board extends Component
         'ageFrom' => null,
         'ageTo' => null,
         'orientation' => 'All',
+        'ethnicity' => 'All',
         'breast_size' => 'All',
         'breastType' => 'All',
         'piercings' => 'All',
@@ -73,6 +74,12 @@ class Board extends Component
         if($this->filters['hairColor'] != 'All') {
             $p->whereHas('hairColor', function($q) {
                 $q->where('id', $this->filters['hairColor']);
+            });
+        }
+
+        if($this->filters['ethnicity'] != 'All') {
+            $p->whereHas('ethnicity', function($q) {
+                $q->where('id', $this->filters['ethnicity']);
             });
         }
 
