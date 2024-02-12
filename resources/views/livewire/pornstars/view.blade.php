@@ -28,7 +28,7 @@
             
             @endif
             
-                
+            <a href="{{$this->pornstar->link}}" target="_blank"> Go to Pornhub</a>
         </div>
         <div>
             <h2 class="text-lg font-bold">Statistics</h2>

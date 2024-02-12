@@ -16,6 +16,6 @@ class View extends Component
 
     public function render()
     {
-        return view('livewire.pornstars.view');
+        return view('livewire.pornstars.view')->title($this->pornstar->name);
     }
 }

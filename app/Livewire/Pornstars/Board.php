@@ -71,23 +71,26 @@ class Board extends Component
             });
         }
 
+        //hair color
         if($this->filters['hairColor'] != 'All') {
             $p->whereHas('hairColor', function($q) {
                 $q->where('id', $this->filters['hairColor']);
             });
         }
 
+        //ethnicity
         if($this->filters['ethnicity'] != 'All') {
             $p->whereHas('ethnicity', function($q) {
                 $q->where('id', $this->filters['ethnicity']);
             });
         }
 
+
         if($this->filters['breastType'] != 'All') {
             $p->whereHas('breastType', function($q) {
                 $q->where('id', $this->filters['breastType']);
             });
-        }        
+        }
 
         if($this->filters['piercings'] != 'All')
         {
@@ -108,6 +111,6 @@ class Board extends Component
             [
                 'pornstars' => $this->getPornstars()->paginate($this->perPage)
             ]
-        );
+        )->title('Pornstars');
     }
 }
