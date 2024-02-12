@@ -1,6 +1,7 @@
 <?php
 
 use App\Livewire\Pornstars\Board;
+use App\Livewire\Pornstars\View;
 use App\Models\Orientation;
 use App\Services\JsonParserService;
 use Illuminate\Support\Facades\Cache;
@@ -18,6 +19,7 @@ use Illuminate\Support\Facades\Route;
 */
 
 Route::get('/', Board::class)->name('pornstars.board');
+Route::get('/pornstars/{name}', View::class)->name('pornstars.view');
 
 Route::get('/test', function () {
     $jps = new JsonParserService();

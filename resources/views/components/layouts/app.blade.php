@@ -11,22 +11,8 @@
             type="image/x-icon"
         />
         @stack('styles')
-        <link rel="stylesheet" href="{{ Vite::asset("resources/css/swiper-bundle.min.css") }}" />
-        <link rel="stylesheet" href="{{ Vite::asset("resources/css/animate.css") }}" />
-
-        <script src="{{ Vite::asset("resources/js/wow.min.js")}}"></script>
-        <script>
-            new WOW().init();
-        </script>
-
         <!-- Scripts -->
         @vite(['resources/css/app.css', 'resources/js/app.js'])
-
-        <link
-        rel="stylesheet"
-        href="https://cdn.jsdelivr.net/gh/lipis/flag-icons@7.0.0/css/flag-icons.min.css"
-        />
-        @vite(['resources/css/app.css', 'resources/js/app.js'])        
         @livewireStyles
         
     </head>
