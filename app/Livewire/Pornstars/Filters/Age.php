@@ -11,11 +11,18 @@ class Age extends Component
 
     public function updatedAgeFrom($value)
     {
+        if($this->ageTo != null && $this->ageTo < $value) {
+            $this->ageTo = $value;
+        }
+
         $this->dispatch('filters-changed', ["ageFrom" => $this->ageFrom]);
     }
 
     public function updatedAgeTo($value)
     {
+        if($this->ageFrom != null && $this->ageFrom > $value) {
+            $this->ageFrom = $value;
+        }
         $this->dispatch('filters-changed', ["ageTo" => $this->ageTo]);
     }
 
