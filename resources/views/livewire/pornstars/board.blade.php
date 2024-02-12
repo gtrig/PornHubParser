@@ -3,10 +3,8 @@
         <h1 class="text-2xl font-bold">Pornstars</h1>
     </div>
     <div class="flex flex-row gap-2">
-        <div>
-            <div class="flex flex-col gap-2 justify-between">
-                <livewire:pornstars.filters />
-            </div>
+        <div class="flex flex-col gap-2 justify-between">
+            <livewire:pornstars.filters />
         </div>
         <div class="mt-4">
             @if($pornstars==null)

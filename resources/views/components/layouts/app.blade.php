@@ -16,8 +16,8 @@
         @livewireStyles
         
     </head>
-    <body class="font-sans antialiased bg-gray-100">
-        <div class="min-h-screen dark:bg-dark">
+    <body class="font-sans antialiased bg-gray-100 dark">
+        <div class="min-h-screen dark:bg-black dark:text-slate-100">
             {{ $slot }}
         </div>
         @stack('scripts')
