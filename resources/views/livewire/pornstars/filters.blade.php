@@ -5,4 +5,6 @@
     <livewire:pornstars.filters.ethnicity />
     <livewire:pornstars.filters.orientation />
     <livewire:pornstars.filters.breastType />
+    <livewire:pornstars.filters.piercings />
+    <livewire:pornstars.filters.tattoos />
 </div>

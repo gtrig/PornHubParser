@@ -89,6 +89,16 @@ class Board extends Component
             });
         }        
 
+        if($this->filters['piercings'] != 'All')
+        {
+            $p->where('piercings',$this->filters['piercings']);
+        }
+
+        if($this->filters['tattoos'] != 'All')
+        {
+            $p->where('tattoos',$this->filters['tattoos']);
+        }
+
         return $p;
     }
 
