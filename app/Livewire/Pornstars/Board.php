@@ -19,6 +19,7 @@ class Board extends Component
     public $sortDirection = 'asc';
     public $filters = [
         'search' => '',
+        'gender' => 'All',
         'ageFrom' => null,
         'ageTo' => null,
         'orientation' => 'All',
@@ -66,6 +67,12 @@ class Board extends Component
 
         if($this->filters['search'] != '') {
             $p->where('name', 'like', '%'.$this->filters['search'].'%');
+        }
+
+        if($this->filters['gender'] != 'All') {
+            $p->whereHas('gender', function($q) {
+                $q->where('id', $this->filters['gender']);
+            });
         }
 
         if($this->filters['ageFrom'] != null && $this->filters['ageTo'] != null) {

@@ -28,6 +28,8 @@ return new class extends Migration
             $table->foreign('breast_type_id')->references('id')->on('breast_types');
             $table->unsignedBigInteger('orientation_id')->nullable();
             $table->foreign('orientation_id')->references('id')->on('orientations');
+            $table->unsignedBigInteger('gender_id')->nullable();
+            $table->foreign('gender_id')->references('id')->on('genders');
             $table->timestamps();
             $table->index('name');
             $table->index('ph_id');

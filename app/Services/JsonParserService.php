@@ -8,6 +8,7 @@ use App\Models\HairColor;
 use App\Models\Ethnicity;
 use App\Models\Orientation;
 use App\Models\BreastType;
+use App\Models\Gender;
 use App\Models\Pornstar;
 use Illuminate\Support\Facades\Storage;
 use \JsonMachine\Items;
@@ -61,6 +62,14 @@ class JsonParserService
         return $hairColors;
     }
 
+    public function parseGenders()
+    {
+        preg_match_all('/"gender":"([^"]+)"/', $this->feed, $matches);
+        $genders = array_values(array_unique($matches[1]));
+
+        return $genders;
+    }
+
     // Parse the Ethnicities from the json file using regex and return an array of unique Ethnicities
     public function parseEthnicities()
     {
@@ -110,6 +119,11 @@ class JsonParserService
             HairColor::firstOrCreate(['value' => $color]);
         }
         
+        $genders = $this->parseGenders();
+        foreach ($genders as $gender) {
+            Gender::firstOrCreate(['value' => $gender]);
+        }
+
         $ethnicities = $this->parseEthnicities();
         foreach ($ethnicities as $ethnicity) {
             Ethnicity::firstOrCreate(['value' => $ethnicity]);
@@ -165,6 +179,10 @@ class JsonParserService
 
         if(array_key_exists('breastType', $pornstar['attributes'])) {
             $p->breastType = $pornstar['attributes']['breastType'];
+        }
+
+        if(array_key_exists('gender', $pornstar['attributes'])) {
+            $p->gender = $pornstar['attributes']['gender'];
         }
     
         return $p;

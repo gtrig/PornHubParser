@@ -15,6 +15,7 @@ class Pornstar extends Model
         'ph_id',
         'attributes',
         'name',
+        'gender',
         'age',
         'link',
         'license',
@@ -90,6 +91,11 @@ class Pornstar extends Model
         return $this->hasMany(Alias::class);
     }
 
+    public function gender()
+    {
+        return $this->belongsTo(Gender::class);
+    }
+
     public function stats()
     {
         return $this->hasOne(Stats::class);
@@ -112,6 +118,9 @@ class Pornstar extends Model
         $this->piercings = $value['piercings'];
         $this->tattoos = $value['tattoos'];
         $this->breast_size = $value['breastSize']??null;
+        if(isset($value['gender'])) {
+            $this->gender()->associate(Gender::getIdByValue($value['gender']));
+        }
         if(isset($value['breastType'])) {
             $this->breast_type = $value['breastType'];
         }
@@ -135,6 +144,15 @@ class Pornstar extends Model
         }
         $this->orientation_id = Orientation::getIdByValue($value);
     }
+
+    // public function setGenderAttribute($value)
+    // {
+    //     if($value == null) {
+    //         return;
+    //     }
+
+    //     $this->gender_id = Gender::getIdByValue($value);
+    // }
 
     public function setEthnicityAttribute($value)
     {

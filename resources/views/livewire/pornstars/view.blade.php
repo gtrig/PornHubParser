@@ -24,7 +24,6 @@
                     @endif
                     
                     @if($this->pornstar->hairColor)
-                    {{-- <p class="text-sm">Hair Color: {{ implode(', ', ) }}</p> --}}
                     <p class="text-sm">Hair Color: {{$this->pornstar->hairColor->pluck('value')->implode(', ')}}</p>
                     <p class="text-sm">Ethnicity: {{$this->pornstar->ethnicity->pluck('value')->implode(', ')}}</p>
                     

@@ -10,6 +10,7 @@
     
     <div class="flex flex-col gap-2 transition-all duration-300 overflow-hidden @if(!$this->showFilters) opacity-0 scale-0 hidden  @endif">
         <livewire:pornstars.filters.search />
+        <livewire:pornstars.filters.gender />
         <livewire:pornstars.filters.age />
         <livewire:pornstars.filters.hairColor />
         <livewire:pornstars.filters.ethnicity />

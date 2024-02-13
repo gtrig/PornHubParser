@@ -11,8 +11,8 @@
             <livewire:pornstars.filters />
         </div>
         <div class="mt-4 flex-grow">
-            @if($pornstars==null)
-                <p class="text-lg font-bold">No pornstars found</p>
+            @if(!count($pornstars))
+                <p class="text-lg font-bold flex-grow text-center">No pornstars found with your criteria</p>
             @else
             <div class="flex flex-row justify-between">
                 <livewire:pornstars.sortBy />
