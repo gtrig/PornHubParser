@@ -59,9 +59,19 @@ sail art storage:link
 sail yarn install
 # build yarn
 sail yarn build
+# finaly run the migrations
+sail art migrate:fresh
 ```
 
 you should be ready now to run the Application.
+
+## Unit tests
+
+The project has minimal test coverage. I would love to change this but the time was limited. To run the tests all you need to do is
+
+```bash
+sail test
+```
 
 ## Using the app
 
