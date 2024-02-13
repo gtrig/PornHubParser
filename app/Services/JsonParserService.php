@@ -181,8 +181,6 @@ class JsonParserService
             $pornstar['ph_id'] = $pornstar['id'];
             unset($pornstar['id']);
             $count++;
-            // $pornstars[] = $pornstar;
-            // UpdatePornstarJob::dispatch($pornstar);
             JsonParserService::updatePornstar($pornstar);
         }
         return $count;

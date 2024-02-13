@@ -10,7 +10,7 @@
                     />
                 @else
                     <img
-                        src="/storage/thumbnails/noimage.png"
+                        src="/noimage.png"
                         alt="{{ $this->pornstar->name }}"
                         class="w-36 h-38 object-cover rounded-lg py-8"
                     />
