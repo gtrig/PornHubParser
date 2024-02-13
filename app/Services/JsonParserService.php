@@ -199,7 +199,7 @@ class JsonParserService
             $pornstar['ph_id'] = $pornstar['id'];
             unset($pornstar['id']);
             $count++;
-            JsonParserService::updatePornstar($pornstar);
+            UpdatePornstarJob::dispatch($pornstar);
         }
         return $count;
     }
